@@ -115,7 +115,7 @@ export const AllProjects = () => {
     return (
         <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-            <Container maxWidth="lg" className={classes.containerProjects}>
+            <Container maxWidth="xl" className={classes.containerProjects}>
                 <form className={classes.form} noValidate autoComplete="off">
                     <TextField id="outlined-basic" label="Filtro por Id" variant="outlined" />
                 </form>

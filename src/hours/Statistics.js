@@ -58,7 +58,7 @@ export const Statistics = () => {
     return (
         <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.containerProjects}>
+        <Container maxWidth="xl" className={classes.containerProjects}>
           <Grid container spacing={3}>
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
