@@ -25,7 +25,7 @@ const notFound = () => (
 );
 
 const privateContainer = () => (
-  <div>
+  <div style={{ display: "flex" }}>
     <SideBar />
     <Switch>
       <Route path="/dashboard/details" component={Details}></Route>

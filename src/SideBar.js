@@ -9,20 +9,27 @@ import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import { ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
+import {
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  useTheme,
+} from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import Logo from "../src/assets/company_logo.png";
-import {
-  Link,
-  useHistory
-} from "react-router-dom";
+import LogoSmall from "../src/assets/company_logo_small.png";
+import { Link, useHistory } from "react-router-dom";
 import Badge from "@material-ui/core/Badge";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { useAuthDispatch, useAuthState } from "./hooks/LoginContext";
 import { logout } from "./hooks/LoginActions";
-import AssessmentIcon from '@material-ui/icons/Assessment';
-import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
+import AssessmentIcon from "@material-ui/icons/Assessment";
+import PeopleOutlineIcon from "@material-ui/icons/PeopleOutline";
+
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 const drawerWidth = 240;
 
@@ -30,23 +37,13 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
   },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-  },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    backgroundColor: "#3378af",
+    backgroundColor: "#000000",
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -56,10 +53,68 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
+  menuButton: {
+    marginRight: 36,
+  },
+  hide: {
+    display: "none",
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: "nowrap",
+  },
+  drawerOpen: {
+    width: drawerWidth,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerClose: {
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: "hidden",
+    width: theme.spacing(7) + 1,
+    [theme.breakpoints.up("sm")]: {
+      width: theme.spacing(9) + 1,
+    },
+  },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
+  toolbarIcon: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 5px",
+    ...theme.mixins.toolbar,
+  },
+  img: {
+    height: 30,
+  },
+  logotiny: {
+    height: 30,
+  },
   title: {
     flexGrow: 1,
   },
-  drawerPaper: {
+  link: {
+    textDecoration: "none",
+    color: "inherit",
+  },
+  /*drawerPaper: {
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
@@ -71,53 +126,57 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
-  },
-  link: {
-    textDecoration: "none",
-    color: "inherit",
-  },
-  img: {
-    height: 30
-  },
+  },*/
 }));
 
 export const SideBar = () => {
   const history = useHistory();
   const classes = useStyles();
+  const currentPath = history.location.pathname;
 
+  const theme = useTheme();
   const routes = [
     {
       path: "/dashboard/projects",
       name: "Proyectos",
-      icon: <AssignmentIcon />
+      icon: <AssignmentIcon />,
     },
     {
       path: "/dashboard/details",
       name: "Detalles",
-      icon: <VisibilityIcon />
+      icon: <VisibilityIcon />,
     },
   ];
 
+  /* const getCurrentView = () => {
+    const { name } = routes.find((p) => p.name === history.location.pathname);
+    console.log(name);
+    return name;
+  };*/
 
+  const getCurrentView = () => {
+    return localStorage.getItem("role") === "admin"
+      ? routesAdmin.find((r) => r.path === currentPath).name
+      : routes.find((r) => r.path === currentPath).name;
+  };
   // Rutas que se usaran para perfil admin
   const routesAdmin = [
     {
       path: "/dashboard/statistics",
       name: "Estadísticas",
-      icon: <AssessmentIcon />
+      icon: <AssessmentIcon />,
     },
     {
       path: "/dashboard/allprojects",
       name: "Proyectos",
-      icon: <AssignmentIcon />
-    }, {
+      icon: <AssignmentIcon />,
+    },
+    {
       path: "/dashboard/workers",
       name: "Trabajadores",
-      icon: <PeopleOutlineIcon />
-    }
-  ]
-
-
+      icon: <PeopleOutlineIcon />,
+    },
+  ];
 
   const dispatch = useAuthDispatch();
   const userDetails = useAuthState();
@@ -126,15 +185,39 @@ export const SideBar = () => {
     logout(dispatch);
     history.push("/login");
   };
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <div className={classes.root}>
+    <React.Fragment>
       <CssBaseline />
       <AppBar
-        position="absolute"
-        className={clsx(classes.appBar, classes.appBarShift)}
+        position="fixed"
+        className={clsx(classes.appBar, { [classes.appBarShift]: open })}
       >
-        <Toolbar className={classes.toolbar}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton, {
+              [classes.hide]: open,
+            })}
+          >
+            <img
+              src={LogoSmall}
+              className={classes.logotiny}
+              alt="Logo Altiuz"
+            />
+            <MenuIcon />
+          </IconButton>
           <Typography
             component="h1"
             variant="h6"
@@ -142,10 +225,16 @@ export const SideBar = () => {
             noWrap
             className={classes.title}
           >
-            Chronos
+            {getCurrentView()}
           </Typography>
-          <Typography component="p" color="inherit">
-            Bienvenido {userDetails.user.email}
+          <Typography
+            noWrap
+            className={classes.title}
+            component="p"
+            color="inherit"
+            align="right"
+          >
+            Mlagos
           </Typography>
           <IconButton color="inherit" onClick={handleLogout}>
             <Badge color="secondary">
@@ -156,40 +245,48 @@ export const SideBar = () => {
       </AppBar>
       <Drawer
         variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        })}
         classes={{
-          paper: clsx(classes.drawerPaper),
+          paper: clsx({
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          }),
         }}
       >
-        <div className={classes.toolbarIcon}>
+        <div className={classes.toolbar}>
           <img src={Logo} className={classes.img} alt="Logo Altiuz" />
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "rtl" ? (
+              <ChevronRightIcon />
+            ) : (
+              <ChevronLeftIcon />
+            )}
+          </IconButton>
         </div>
         <Divider />
         <List>
-          {localStorage.getItem("role") === "admin" ? (routesAdmin.map((route, index) => (
-            <Link className={classes.link} key={index} to={route.path}>
-              <ListItem button>
-                <ListItemIcon>
-                  {route.icon}
-                </ListItemIcon>
-                <ListItemText primary={route.name} />
-              </ListItem>
-            </Link>
-          ))) : (
-              routes.map((route, index) => (
+          {localStorage.getItem("role") === "admin"
+            ? routesAdmin.map((route, index) => (
                 <Link className={classes.link} key={index} to={route.path}>
-                  <ListItem button>
-                    <ListItemIcon>
-                      {route.icon}
-                    </ListItemIcon>
+                  <ListItem button onClick={handleDrawerClose}>
+                    <ListItemIcon>{route.icon}</ListItemIcon>
                     <ListItemText primary={route.name} />
                   </ListItem>
                 </Link>
               ))
-            )}
+            : routes.map((route, index) => (
+                <Link className={classes.link} key={index} to={route.path}>
+                  <ListItem button>
+                    <ListItemIcon>{route.icon}</ListItemIcon>
+                    <ListItemText primary={route.name} />
+                  </ListItem>
+                </Link>
+              ))}
         </List>
-        <Divider />
-        <List></List>
       </Drawer>
-    </div>
+    </React.Fragment>
   );
 };
