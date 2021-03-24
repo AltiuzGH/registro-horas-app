@@ -9,7 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { ModalEdit } from "./modals/ModalEdit";
-import Container from '@material-ui/core/Container';
+import Container from "@material-ui/core/Container";
 
 const columns = [
   { id: "proyecto", label: "Proyecto", minWidth: 150 },
@@ -45,19 +45,19 @@ function createData(
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginLeft: 'flex',
+    marginLeft: "flex",
   },
   rootPaper: {
-    width: '100%'
+    width: "100%",
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
   },
   toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: "0 8px",
     ...theme.mixins.toolbar,
   },
   container: {
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(4),
   },
   containerPaper: {
-    maxHeight: 800
+    maxHeight: 800,
   },
   fab: {
     backgroundColor: "#3378af",
@@ -77,19 +77,18 @@ const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
+    height: "100vh",
+    overflow: "auto",
     marginLeft: 240,
     width: `calc(100% - 240px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-  }
+  },
 }));
 
 export const Details = () => {
-
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -149,7 +148,7 @@ export const Details = () => {
   return (
     <main className={classes.content}>
       <div className={classes.appBarSpacer} />
-      <Container maxWidth="lg" className={classes.container}>
+      <Container maxWidth="xl" className={classes.container}>
         <Paper className={classes.rootPaper}>
           <TableContainer className={classes.containerPaper}>
             <Table stickyHeader aria-label="sticky table">
@@ -171,7 +170,12 @@ export const Details = () => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
                     return (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.code}
+                      >
                         {columns.map((column) => {
                           const value = row[column.id];
                           return (
@@ -198,9 +202,7 @@ export const Details = () => {
             onChangeRowsPerPage={handleChangeRowsPerPage}
           />
         </Paper>
-
       </Container>
     </main>
-
   );
 };

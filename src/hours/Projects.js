@@ -100,7 +100,7 @@ export const Projects = () => {
         <React.Fragment>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.containerProjects}>
+                <Container maxWidth="xl" className={classes.containerProjects}>
                     <form className={classes.container} noValidate>
                         <TextField
                             id="date"
@@ -114,7 +114,7 @@ export const Projects = () => {
                         />
                     </form>
                     <main>
-                        <Container className={classes.cardGrid} maxWidth="md">
+                        <Container className={classes.cardGrid} maxWidth="xl">
                             {/* End hero unit */}
                             <Grid container spacing={4}>
                                 {cards.map((card) => (
