@@ -12,7 +12,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Logo from "../src/assets/company_logo.png";
 import AltiuzBackGround from "../src/assets/altiuz.jpg";
 import { useForm } from "./hooks/useForm";
-import { validateEmail } from "./utils/validations";
 import {
   NotificationContainer,
   NotificationManager,
@@ -60,29 +59,28 @@ const useStyles = makeStyles((theme) => ({
 
 export const Login = ({ history }) => {
   const [formValues, handleInputChange] = useForm({
-    email: "",
+    username: "",
     password: "",
   });
 
 
-  const { email, password } = formValues;
+  const { username, password } = formValues;
 
   const dispatch = useAuthDispatch();
   const { loading } = useAuthState();
 
 
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
-      NotificationManager.warning("Email Incorrecto");
-    } else {
+    
       try {
-        const response = await loginUser(dispatch, { email, password });
-        if (!response.user) return;
+        const response = await loginUser(dispatch, { username, password });
+        if (!response.full_name) return;
         // history.push("/dashboard/projects");
         // if solo para redirigir entre perfiles, usado como prueba
-        if (email === "nero@admin.com" && password === "admin123") {
+        if (response) {
           localStorage.setItem('role', 'admin');
           history.push("/dashboard/statistics");
           // history.push("/dashboard/projects");
@@ -90,7 +88,7 @@ export const Login = ({ history }) => {
       } catch (error) {
       }
 
-    }
+    
   };
 
   const classes = useStyles();
@@ -105,16 +103,16 @@ export const Login = ({ history }) => {
             Chronos
           </Typography>
           <form className={classes.form} onSubmit={handleLogin}>
-            <TextField
+          <TextField
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              label="User"
+              name="username"
+              autoComplete="username"
               autoFocus
-              value={email}
+              value={username}
               onChange={handleInputChange}
               disabled={loading}
             />

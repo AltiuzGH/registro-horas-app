@@ -234,7 +234,7 @@ export const SideBar = () => {
             color="inherit"
             align="right"
           >
-            Mlagos
+            Bienvenido {userDetails.user} 
           </Typography>
           <IconButton color="inherit" onClick={handleLogout}>
             <Badge color="secondary">
