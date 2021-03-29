@@ -23,9 +23,9 @@ const theme = useTheme();
 
   return (
     <React.Fragment>
-      <Typography component="h2" variant="h6" color="primary" gutterBottom>
-        Total Horas Registrada
-      </Typography>
+              <Typography component="h2" variant="h6" color="primary" gutterBottom>
+            Total Horas Registradas
+        </Typography>
       <ResponsiveContainer>
         <LineChart
           data={data}
@@ -41,17 +41,12 @@ const theme = useTheme();
             <Label
               angle={270}
               position="left"
-              style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
+              style={{ textAnchor: 'middle', fill: theme.palette.text.primary }}
             >
               Horas
             </Label>
           </YAxis>
-          <Line
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
+          <Line type="monotone" dataKey="amount" stroke={theme.palette.primary.main} dot={false} />
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>
