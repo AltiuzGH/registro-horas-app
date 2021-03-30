@@ -15,6 +15,7 @@ import { Login } from "./Login";
 import { SideBar } from "./SideBar";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
+import image404 from "../src/assets/404.png";
 
 const LoginContainer = () => (
   <div>
@@ -22,8 +23,22 @@ const LoginContainer = () => (
   </div>
 );
 
+const sectionStyle = {
+  width: "100%",
+  height: "94vh",
+  backgroundRepeat: "no-repeat",
+  backgroundImage: `url(${image404})`,
+};
+
 const notFound = () => (
-  <div style={{ marginLeft: 800, marginTop: 400 }}>404</div>
+  <div>
+    <section style={sectionStyle}>
+      <h1 style={{ marginLeft: "38%", fontSize: 30 }}>
+        Esta página está perdida en el espacio
+      </h1>
+      <h1 style={{ marginLeft: "45%", fontSize: 100 }}>404</h1>
+    </section>
+  </div>
 );
 
 const privateContainer = () => (
