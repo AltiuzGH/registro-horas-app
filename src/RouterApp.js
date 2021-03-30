@@ -13,6 +13,8 @@ import { Statistics } from "./hours/Statistics";
 import { Workers } from "./hours/Workers";
 import { Login } from "./Login";
 import { SideBar } from "./SideBar";
+import PublicRoute from "./PublicRoute";
+import PrivateRoute from "./PrivateRoute";
 
 const LoginContainer = () => (
   <div>
@@ -28,27 +30,42 @@ const privateContainer = () => (
   <div style={{ display: "flex" }}>
     <SideBar />
     <Switch>
-      <Route path="/dashboard/details" component={Details}></Route>
-      <Route path="/dashboard/projects" component={Projects}></Route>
-      <Route path="/dashboard/statistics" component={Statistics}></Route>
-      <Route path="/dashboard/allprojects" component={AllProjects}></Route>
-      <Route path="/dashboard/workers" component={Workers}></Route>
-      <Route path="/dashboard" component={Projects}></Route>
+      <PrivateRoute
+        path="/dashboard/details"
+        component={Details}
+      ></PrivateRoute>
+      <PrivateRoute
+        path="/dashboard/projects"
+        component={Projects}
+      ></PrivateRoute>
+      <PrivateRoute
+        path="/dashboard/statistics"
+        component={Statistics}
+      ></PrivateRoute>
+      <PrivateRoute
+        path="/dashboard/allprojects"
+        component={AllProjects}
+      ></PrivateRoute>
+      <PrivateRoute
+        path="/dashboard/workers"
+        component={Workers}
+      ></PrivateRoute>
+      <PrivateRoute path="/dashboard" component={Projects}></PrivateRoute>
     </Switch>
   </div>
 );
 
 export const RouterApp = () => {
   return (
-    <AuthProvider>
-      <Router basename="/registro-horas-app">
+    <Router basename="/registro-horas-app">
+      <AuthProvider>
         <Switch>
-          <Route path="/login" component={LoginContainer}></Route>
           <Route path="/dashboard" component={privateContainer}></Route>
           <Redirect exact from="/" to="/login"></Redirect>
+          <PublicRoute path="/login" component={LoginContainer} />
           <Route component={notFound}></Route>
         </Switch>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 };

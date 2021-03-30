@@ -154,11 +154,15 @@ export const SideBar = () => {
     return name;
   };*/
 
-  const getCurrentView = () => {
+  /*const getCurrentView = () => {
+    console.log(localStorage.getItem("role"));
+    console.log(routesAdmin);
+    console.log(routes);
     return localStorage.getItem("role") === "admin"
       ? routesAdmin.find((r) => r.path === currentPath).name
       : routes.find((r) => r.path === currentPath).name;
-  };
+  };*/
+
   // Rutas que se usaran para perfil admin
   const routesAdmin = [
     {
@@ -225,7 +229,7 @@ export const SideBar = () => {
             noWrap
             className={classes.title}
           >
-            {getCurrentView()}
+          
           </Typography>
           <Typography
             noWrap
@@ -234,7 +238,7 @@ export const SideBar = () => {
             color="inherit"
             align="right"
           >
-            Bienvenido {userDetails.user} 
+            Bienvenido {userDetails.user}
           </Typography>
           <IconButton color="inherit" onClick={handleLogout}>
             <Badge color="secondary">
