@@ -74,15 +74,15 @@ const useStyles = makeStyles((theme) => ({
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
-      flexGrow: 1,
-      height: '100vh',
-      overflow: 'auto',
-      marginLeft: 240,
-      width: `calc(100% - 240px)`,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
+        flexGrow: 1,
+        padding: theme.spacing(3),
+        height: "100vh",
+        overflow: "auto",
+        width: `calc(100% - 240px)`,
+        transition: theme.transitions.create(["width", "margin"], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
     },
     containerProjects: {
         paddingTop: theme.spacing(4),

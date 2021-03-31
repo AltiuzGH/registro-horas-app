@@ -77,9 +77,9 @@ const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
+    padding: theme.spacing(3),
     height: "100vh",
     overflow: "auto",
-    marginLeft: 240,
     width: `calc(100% - 240px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
