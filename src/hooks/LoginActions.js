@@ -1,58 +1,56 @@
-import {
-	NotificationManager
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
+import { NotificationManager } from "react-notifications";
 
-const LOGIN_URL = 'https://registro-horas-back-dev.herokuapp.com';
+const LOGIN_URL = "https://registro-horas-auth-back-production.up.railway.app";
 
 export async function loginUser(dispatch, loginPayload) {
-	const requestLoginOptions = {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(loginPayload),
-	};
+  const requestLoginOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(loginPayload),
+  };
 
-	
+  try {
+    dispatch({ type: "REQUEST_LOGIN" });
+    const resAuthLogin = await fetch(
+      `${LOGIN_URL}/api/auth/login`,
+      requestLoginOptions
+    );
+    const loginData = await resAuthLogin.json();
+    if (!loginData.data) {
+      dispatch({ type: "LOGIN_ERROR", error: loginData.error });
+      NotificationManager.error(loginData.error);
+      return;
+    }
 
-	try {
-		dispatch({ type: 'REQUEST_LOGIN' });
-		let response = await fetch(`${LOGIN_URL}/api/auth/login`, requestLoginOptions);
-		let data = await response.json();
-		console.log(data)
-		if (!data.data) {
-		 dispatch({ type: 'LOGIN_ERROR', error: data.error});
-		 NotificationManager.error(data.error);
-		 return;
-		}
-        const token = data.data[0].accessToken;
-		const requestUserOptions = {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
-		}
-		
-		let responseUser = await fetch(`${LOGIN_URL}/api/users/profile`, requestUserOptions);
-		let userData = await responseUser.json();
-
-		if (!userData.full_name) {
-			dispatch({ type: 'LOGIN_ERROR', error: userData.message});
-			NotificationManager.error(userData.message);
-			return;
-		}
-
-		if (userData.full_name) {
-		 	dispatch({ type: 'LOGIN_SUCCESS', payload: userData });
-		 	localStorage.setItem('currentUser', JSON.stringify(userData));
-			return userData;
-		}
-
-	} catch (error) {
-		dispatch({ type: 'LOGIN_ERROR', error: error });
-		NotificationManager.error(error);
-	}
+    const { accessToken } = loginData.data[0];
+    const requestUserOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    const resAuthMe = await fetch(
+      `${LOGIN_URL}/api/auth/me`,
+      requestUserOptions
+    );
+    let userData = await resAuthMe.json();
+    if (!userData.data) {
+      dispatch({ type: "LOGIN_ERROR", error: userData.error });
+      NotificationManager.error(userData.error);
+      return;
+    }
+    dispatch({ type: "LOGIN_SUCCESS", payload: userData.data[0] });
+    localStorage.setItem("currentUser", JSON.stringify(userData.data[0]));
+    return userData.data[0];
+  } catch (error) {
+    dispatch({ type: "LOGIN_ERROR", error: error.message });
+    NotificationManager.error(error.message);
+  }
 }
 
 export async function logout(dispatch) {
-	dispatch({ type: 'LOGOUT' });
-	localStorage.removeItem('currentUser');
-	localStorage.removeItem('role');
+  dispatch({ type: "LOGOUT" });
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("role");
 }

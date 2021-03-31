@@ -12,14 +12,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import Logo from "../src/assets/company_logo.png";
 import AltiuzBackGround from "../src/assets/altiuz.jpg";
 import { useForm } from "./hooks/useForm";
-import {
-  NotificationContainer,
-  NotificationManager,
-} from "react-notifications";
+import { NotificationContainer } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import { useAuthDispatch, useAuthState } from "./hooks/LoginContext";
 import { loginUser } from "./hooks/LoginActions";
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,8 +50,8 @@ const useStyles = makeStyles((theme) => ({
     height: 37,
   },
   loading: {
-    color: 'white'
-  }
+    color: "white",
+  },
 }));
 
 export const Login = ({ history }) => {
@@ -63,32 +60,31 @@ export const Login = ({ history }) => {
     password: "",
   });
 
-
-  const { username, password } = formValues;
-
   const dispatch = useAuthDispatch();
   const { loading } = useAuthState();
 
+  const { username, password } = formValues;
 
-
+  const userRoles = ["OPER-Team"];
+  const adminRoles = ["OPER-Lideres"];
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-      try {
-        const response = await loginUser(dispatch, { username, password });
-        if (!response.full_name) return;
-        // history.push("/dashboard/projects");
-        // if solo para redirigir entre perfiles, usado como prueba
-        if (response) {
-          localStorage.setItem('role', 'admin');
-          history.push("/dashboard/statistics");
-          // history.push("/dashboard/projects");
-        }
-      } catch (error) {
+    try {
+      const resLogin = await loginUser(dispatch, { username, password });
+      if (!resLogin) return;
+      const { role } = resLogin;
+      if (adminRoles.includes(role)) {
+        localStorage.setItem("role", "admin");
+      } else if (userRoles.includes(role)) {
+        localStorage.setItem("role", "user");
+      } else {
+        throw new Error("Invalid Role");
       }
-
-    
+      return;
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const classes = useStyles();
@@ -103,7 +99,7 @@ export const Login = ({ history }) => {
             Chronos
           </Typography>
           <form className={classes.form} onSubmit={handleLogin}>
-          <TextField
+            <TextField
               variant="outlined"
               margin="normal"
               required

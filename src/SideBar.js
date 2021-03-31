@@ -19,7 +19,7 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import Logo from "../src/assets/company_logo.png";
 import LogoSmall from "../src/assets/company_logo_small.png";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import Badge from "@material-ui/core/Badge";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { useAuthDispatch, useAuthState } from "./hooks/LoginContext";
@@ -135,25 +135,50 @@ export const SideBar = () => {
   const currentPath = history.location.pathname;
 
   const theme = useTheme();
-  const routes = [
-    {
-      path: "/dashboard/projects",
-      name: "Proyectos",
-      icon: <AssignmentIcon />,
-    },
-    {
-      path: "/dashboard/details",
-      name: "Detalles",
-      icon: <VisibilityIcon />,
-    },
-  ];
 
-  /* const getCurrentView = () => {
-    const { name } = routes.find((p) => p.name === history.location.pathname);
-    console.log(name);
-    return name;
-  };*/
 
+    // Rutas que se usaran para perfil admin
+    const routesAdmin = [
+      {
+        path: "/dashboard/statistics",
+        name: "Estadísticas",
+        icon: <AssessmentIcon />,
+      },
+      {
+        path: "/dashboard/allprojects",
+        name: "Proyectos",
+        icon: <AssignmentIcon />,
+      },
+      {
+        path: "/dashboard/workers",
+        name: "Trabajadores",
+        icon: <PeopleOutlineIcon />,
+      },
+    ];
+    // Rutas que se usaran para perfil user
+    const routes = [
+      {
+        path: "/dashboard/projects",
+        name: "Proyectos",
+        icon: <AssignmentIcon />,
+      },
+      {
+        path: "/dashboard/details",
+        name: "Detalles",
+        icon: <VisibilityIcon />,
+      },
+    ];
+
+    
+  const GetCurrentView = () => {
+    const currentLocation = useLocation();
+    const currentRole = localStorage.getItem("role");
+    return currentRole === "admin"
+      ? routesAdmin.find((p) => p.path === currentLocation.pathname).name
+      : routes.find((p) => console.log(p.path));
+  };
+
+  console.log(GetCurrentView())
   /*const getCurrentView = () => {
     console.log(localStorage.getItem("role"));
     console.log(routesAdmin);
@@ -162,25 +187,6 @@ export const SideBar = () => {
       ? routesAdmin.find((r) => r.path === currentPath).name
       : routes.find((r) => r.path === currentPath).name;
   };*/
-
-  // Rutas que se usaran para perfil admin
-  const routesAdmin = [
-    {
-      path: "/dashboard/statistics",
-      name: "Estadísticas",
-      icon: <AssessmentIcon />,
-    },
-    {
-      path: "/dashboard/allprojects",
-      name: "Proyectos",
-      icon: <AssignmentIcon />,
-    },
-    {
-      path: "/dashboard/workers",
-      name: "Trabajadores",
-      icon: <PeopleOutlineIcon />,
-    },
-  ];
 
   const dispatch = useAuthDispatch();
   const userDetails = useAuthState();
@@ -222,15 +228,14 @@ export const SideBar = () => {
             />
             <MenuIcon />
           </IconButton>
+          {GetCurrentView()}
           <Typography
             component="h1"
             variant="h6"
             color="inherit"
             noWrap
             className={classes.title}
-          >
-          
-          </Typography>
+          ></Typography>
           <Typography
             noWrap
             className={classes.title}
@@ -283,7 +288,7 @@ export const SideBar = () => {
               ))
             : routes.map((route, index) => (
                 <Link className={classes.link} key={index} to={route.path}>
-                  <ListItem button>
+                  <ListItem button onClick={handleDrawerClose}>
                     <ListItemIcon>{route.icon}</ListItemIcon>
                     <ListItemText primary={route.name} />
                   </ListItem>
