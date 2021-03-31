@@ -12,7 +12,6 @@ import { Projects } from "./hours/Projects";
 import { Statistics } from "./hours/Statistics";
 import { Workers } from "./hours/Workers";
 import { Login } from "./Login";
-import { SideBar } from "./SideBar";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 import image404 from "../src/assets/404.png";
@@ -30,42 +29,29 @@ const sectionStyle = {
   backgroundImage: `url(${image404})`,
 };
 
-const notFound = () => (
-  <div>
-    <section style={sectionStyle}>
-      <h1 style={{ marginLeft: "38%", fontSize: 30 }}>
-        Esta página está perdida en el espacio
-      </h1>
-      <h1 style={{ marginLeft: "45%", fontSize: 100 }}>404</h1>
-    </section>
-  </div>
+export const NotFound = () => (
+  <section style={sectionStyle}>
+    <h1 style={{ marginLeft: "38%", fontSize: 30 }}>
+      Esta página está perdida en el espacio
+    </h1>
+    <h1 style={{ marginLeft: "45%", fontSize: 100 }}>404</h1>
+  </section>
 );
 
 const privateContainer = () => (
   <div style={{ display: "flex" }}>
-    <SideBar />
     <Switch>
+      <PrivateRoute exact path="/dashboard" component={Projects} />
+      <PrivateRoute exact path="/dashboard/details" component={Details} />
+      <PrivateRoute exact path="/dashboard/projects" component={Projects} />
+      <PrivateRoute exact path="/dashboard/statistics" component={Statistics} />
+      <PrivateRoute exact path="/dashboard/workers" component={Workers} />
       <PrivateRoute
-        path="/dashboard/details"
-        component={Details}
-      ></PrivateRoute>
-      <PrivateRoute
-        path="/dashboard/projects"
-        component={Projects}
-      ></PrivateRoute>
-      <PrivateRoute
-        path="/dashboard/statistics"
-        component={Statistics}
-      ></PrivateRoute>
-      <PrivateRoute
+        exact
         path="/dashboard/allprojects"
         component={AllProjects}
-      ></PrivateRoute>
-      <PrivateRoute
-        path="/dashboard/workers"
-        component={Workers}
-      ></PrivateRoute>
-      <PrivateRoute path="/dashboard" component={Projects}></PrivateRoute>
+      />
+      <PrivateRoute path="*" component={NotFound} />
     </Switch>
   </div>
 );
@@ -75,10 +61,10 @@ export const RouterApp = () => {
     <Router basename="/registro-horas-app">
       <AuthProvider>
         <Switch>
-          <Route path="/dashboard" component={privateContainer}></Route>
+          <Route path="/dashboard" component={privateContainer} />
           <Redirect exact from="/" to="/login"></Redirect>
           <PublicRoute path="/login" component={LoginContainer} />
-          <Route component={notFound}></Route>
+          <Route path="*" component={NotFound} />
         </Switch>
       </AuthProvider>
     </Router>

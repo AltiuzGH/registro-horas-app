@@ -62,7 +62,6 @@ export const Login = ({ history }) => {
 
   const dispatch = useAuthDispatch();
   const { loading } = useAuthState();
-
   const { username, password } = formValues;
 
   const userRoles = ["OPER-Team"];

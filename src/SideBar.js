@@ -132,64 +132,64 @@ const useStyles = makeStyles((theme) => ({
 export const SideBar = () => {
   const history = useHistory();
   const classes = useStyles();
-  const currentPath = history.location.pathname;
 
   const theme = useTheme();
 
+  // Rutas que se usaran para perfil admin
+  const routesAdmin = [
+    {
+      path: "/dashboard",
+      name: "Dashboard",
+      icon: <AssessmentIcon />,
+    },
+    {
+      path: "/dashboard/statistics",
+      name: "Estadísticas",
+      icon: <AssessmentIcon />,
+    },
+    {
+      path: "/dashboard/allprojects",
+      name: "Proyectos",
+      icon: <AssignmentIcon />,
+    },
+    {
+      path: "/dashboard/workers",
+      name: "Trabajadores",
+      icon: <PeopleOutlineIcon />,
+    },
+  ];
+  // Rutas que se usaran para perfil user
+  const routesUser = [
+    {
+      path: "/dashboard",
+      name: "Dashboard",
+      icon: <AssessmentIcon />,
+    },
+    {
+      path: "/dashboard/projects",
+      name: "Proyectos",
+      icon: <AssignmentIcon />,
+    },
+    {
+      path: "/dashboard/details",
+      name: "Detalles",
+      icon: <VisibilityIcon />,
+    },
+  ];
 
-    // Rutas que se usaran para perfil admin
-    const routesAdmin = [
-      {
-        path: "/dashboard/statistics",
-        name: "Estadísticas",
-        icon: <AssessmentIcon />,
-      },
-      {
-        path: "/dashboard/allprojects",
-        name: "Proyectos",
-        icon: <AssignmentIcon />,
-      },
-      {
-        path: "/dashboard/workers",
-        name: "Trabajadores",
-        icon: <PeopleOutlineIcon />,
-      },
-    ];
-    // Rutas que se usaran para perfil user
-    const routes = [
-      {
-        path: "/dashboard/projects",
-        name: "Proyectos",
-        icon: <AssignmentIcon />,
-      },
-      {
-        path: "/dashboard/details",
-        name: "Detalles",
-        icon: <VisibilityIcon />,
-      },
-    ];
-
-    
   const GetCurrentView = () => {
-    const currentLocation = useLocation();
+    const { pathname } = useLocation();
     const currentRole = localStorage.getItem("role");
+    console.log("Current Path:", pathname);
     return currentRole === "admin"
-      ? routesAdmin.find((p) => p.path === currentLocation.pathname).name
-      : routes.find((p) => console.log(p.path));
+      ? routesAdmin.find((p) => p.path === pathname)?.name
+      : routesUser.find((p) => p.path === pathname)?.name;
+    //routesUser.find((p) => console.log("UP:", p.path)); //p.path === currentLocation.pathname).name;
+    //routesAdmin.find((p) => console.log("AP:", p.path)); //p.path === currentLocation.pathname).name;
   };
 
-  console.log(GetCurrentView())
-  /*const getCurrentView = () => {
-    console.log(localStorage.getItem("role"));
-    console.log(routesAdmin);
-    console.log(routes);
-    return localStorage.getItem("role") === "admin"
-      ? routesAdmin.find((r) => r.path === currentPath).name
-      : routes.find((r) => r.path === currentPath).name;
-  };*/
-
   const dispatch = useAuthDispatch();
-  const userDetails = useAuthState();
+  const { user } = useAuthState();
 
   const handleLogout = () => {
     logout(dispatch);
@@ -228,14 +228,15 @@ export const SideBar = () => {
             />
             <MenuIcon />
           </IconButton>
-          {GetCurrentView()}
           <Typography
             component="h1"
             variant="h6"
             color="inherit"
             noWrap
             className={classes.title}
-          ></Typography>
+          >
+            {GetCurrentView() || "View Name"}
+          </Typography>
           <Typography
             noWrap
             className={classes.title}
@@ -243,7 +244,7 @@ export const SideBar = () => {
             color="inherit"
             align="right"
           >
-            Bienvenido {userDetails.user}
+            Bienvenido {user.full_name}
           </Typography>
           <IconButton color="inherit" onClick={handleLogout}>
             <Badge color="secondary">
@@ -286,7 +287,7 @@ export const SideBar = () => {
                   </ListItem>
                 </Link>
               ))
-            : routes.map((route, index) => (
+            : routesUser.map((route, index) => (
                 <Link className={classes.link} key={index} to={route.path}>
                   <ListItem button onClick={handleDrawerClose}>
                     <ListItemIcon>{route.icon}</ListItemIcon>

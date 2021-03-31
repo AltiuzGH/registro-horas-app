@@ -4,8 +4,7 @@ import { useAuthState } from "./hooks/LoginContext";
 
 export default function PublicRoute({ component: Component, ...rest }) {
   const { user } = useAuthState();
-  console.log(useAuthState());
-
+  user ?  console.log(user) :  console.log("usuario no auth");
   return (
     <Route
       {...rest}
@@ -13,7 +12,7 @@ export default function PublicRoute({ component: Component, ...rest }) {
         return !user ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/dashboard/statistics" />
+          <Redirect to="/dashboard" />
         );
       }}
     ></Route>
