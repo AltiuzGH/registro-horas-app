@@ -42,6 +42,11 @@ const userRoutes = [
     name: "Detalles",
     icon: <VisibilityIcon />,
   },
+  {
+    path: "/dashboard/profile",
+    name: "Profile",
+    icon: <VisibilityIcon />,
+  },
 ];
 
 export const Routes = [

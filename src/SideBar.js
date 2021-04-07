@@ -195,6 +195,10 @@ export const SideBar = () => {
     logout(dispatch);
     history.push("/login");
   };
+
+  const handleProfile = () => {
+    history.push("/dashboard/profile");
+  };
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -235,7 +239,7 @@ export const SideBar = () => {
             noWrap
             className={classes.title}
           >
-            {GetCurrentView() || "View Name"}
+            {GetCurrentView() || "Mi Perfil"}
           </Typography>
           <Typography
             noWrap
@@ -243,6 +247,7 @@ export const SideBar = () => {
             component="p"
             color="inherit"
             align="right"
+            onClick={handleProfile}
           >
             Bienvenido {user.full_name}
           </Typography>

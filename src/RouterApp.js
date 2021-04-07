@@ -10,6 +10,7 @@ import { AllProjects } from "./hours/AllProjects";
 import { Details } from "./hours/Details";
 import { Projects } from "./hours/Projects";
 import { Statistics } from "./hours/Statistics";
+import { Profile } from "./hours/Profile";
 import { Workers } from "./hours/Workers";
 import { Login } from "./Login";
 import PublicRoute from "./PublicRoute";
@@ -45,6 +46,7 @@ const privateContainer = () => (
       <PrivateRoute exact path="/dashboard/details" component={Details} />
       <PrivateRoute exact path="/dashboard/projects" component={Projects} />
       <PrivateRoute exact path="/dashboard/statistics" component={Statistics} />
+      <PrivateRoute exact path="/dashboard/profile" component={Profile} />
       <PrivateRoute exact path="/dashboard/workers" component={Workers} />
       <PrivateRoute
         exact
