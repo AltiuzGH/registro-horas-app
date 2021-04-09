@@ -15,20 +15,13 @@ import { Workers } from "./hours/Workers";
 import { Login } from "./Login";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
-import image404 from "../src/assets/404.png";
+import { sectionStyle } from "./styles/_routerApp";
 
 const LoginContainer = () => (
   <div>
     <Route path="/login" component={Login}></Route>
   </div>
 );
-
-const sectionStyle = {
-  width: "100%",
-  height: "94vh",
-  backgroundRepeat: "no-repeat",
-  backgroundImage: `url(${image404})`,
-};
 
 export const NotFound = () => (
   <section style={sectionStyle}>
