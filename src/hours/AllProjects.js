@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -10,31 +10,33 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import ProjectsService from "../services/project.service";
 import { ModalAssign } from "./modals/ModalAssign";
 
 const columns = [
-  { id: "idproj", label: "Id Proyecto", minWidth: 100, align: "center" },
-  { id: "proyecto", label: "Proyecto", minWidth: 110, align: "center" },
+  { id: "id_project_c", label: "Id Proyecto", minWidth: 100, align: "center" },
+  { id: "name", label: "Proyecto", minWidth: 110, align: "center" },
   {
-    id: "cuenta",
+    id: "cuenta_p_c",
     label: "Cuenta",
     minWidth: 130,
     align: "center",
   },
   {
-    id: "inicio",
+    id: "estimated_end_date",
     label: "Fecha de Inicio",
     minWidth: 140,
     align: "center",
   },
   {
-    id: "termino",
+    id: "estimated_start_date",
     label: "Fecha de Término",
     minWidth: 170,
     align: "center",
   },
   {
-    id: "estado",
+    id: "status",
     label: "Estado",
     minWidth: 170,
     align: "center",
@@ -45,120 +47,6 @@ const columns = [
     minWidth: 170,
     align: "center",
   },
-];
-
-function createData(
-  idproj,
-  proyecto,
-  cuenta,
-  inicio,
-  termino,
-  estado,
-  asignar
-) {
-  return { idproj, proyecto, cuenta, inicio, termino, estado, asignar };
-}
-
-const rows = [
-  createData(
-    "10,000",
-    "BCH Plataforma",
-    "Banco de Chile",
-    "05/05/2021",
-    "05/07/2021",
-    "En Preventa",
-    <ModalAssign />
-  ),
-  createData(
-    "10,325",
-    "Computec Proj",
-    "Computec",
-    "05/05/2021",
-    "05/07/2021",
-    "En Preventa",
-    <ModalAssign />
-  ),
-  createData(
-    "11,250",
-    "Sura Proj",
-    "Sura",
-    "05/05/2021",
-    "05/07/2021",
-    "Finalizado",
-    <ModalAssign />
-  ),
-  createData(
-    "21,333",
-    "Nexus Proj",
-    "Nexus",
-    "05/05/2021",
-    "05/07/2021",
-    "En Preventa",
-    <ModalAssign />
-  ),
-  createData(
-    "12,633",
-    "CRM Altiuz",
-    "Altiuz",
-    "05/05/2021",
-    "05/07/2021",
-    "Finalizado",
-    <ModalAssign />
-  ),
-  createData(
-    "10,755",
-    "Altiuz Reports",
-    "Altiuz",
-    "05/05/2021",
-    "05/07/2021",
-    "En Preventa",
-    <ModalAssign />
-  ),
-  createData(
-    "11,232",
-    "Lo Valledor",
-    "Lo Valledor",
-    "05/05/2021",
-    "05/07/2021",
-    "Finalizado",
-    <ModalAssign />
-  ),
-  createData(
-    "10,222",
-    "Captación",
-    "Altiuz",
-    "05/05/2021",
-    "05/07/2021",
-    "En Preventa",
-    <ModalAssign />
-  ),
-  createData(
-    "10,422",
-    "Proyecto Interno",
-    "Altiuz",
-    "05/05/2021",
-    "05/07/2021",
-    "Finalizado",
-    <ModalAssign />
-  ),
-  createData(
-    "12,333",
-    "Proyecto Reg",
-    "Altiuz",
-    "05/05/2021",
-    "05/07/2021",
-    "En Preventa",
-    <ModalAssign />
-  ),
-  createData(
-    "11,212",
-    "Historial Proj",
-    "Altiuz",
-    "05/05/2021",
-    "05/07/2021",
-    "En Preventa",
-    <ModalAssign />
-  ),
 ];
 
 const drawerWidth = 240;
@@ -195,6 +83,28 @@ const useStyles = makeStyles((theme) => ({
 
 export const AllProjects = () => {
   const classes = useStyles();
+  const [projects, setProjects] = useState([]);
+  const [progress, setProgress] = useState(true);
+
+  useEffect(() => {
+    getProjects();
+  }, []);
+
+  const getProjects = () => {
+    ProjectsService.getAll()
+      .then((response) => {
+        const projectAssign = response.projects.map(function (item) {
+          item.asignar = <ModalAssign />;
+          return item;
+        });
+        setProjects(projectAssign);
+        setProgress(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setProgress(false);
+      });
+  };
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -210,6 +120,7 @@ export const AllProjects = () => {
   return (
     <main className={classes.content}>
       <div className={classes.appBarSpacer} />
+
       <Container maxWidth="xl" className={classes.containerProjects}>
         <form className={classes.form} noValidate autoComplete="off">
           <TextField
@@ -220,6 +131,7 @@ export const AllProjects = () => {
         </form>
         <Paper className={classes.root}>
           <TableContainer className={classes.container}>
+            {progress && <LinearProgress />}
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -235,7 +147,7 @@ export const AllProjects = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows
+                {projects
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
                     return (
@@ -243,7 +155,7 @@ export const AllProjects = () => {
                         hover
                         role="checkbox"
                         tabIndex={-1}
-                        key={row.code}
+                        key={row.id_project_c}
                       >
                         {columns.map((column) => {
                           const value = row[column.id];
@@ -264,7 +176,7 @@ export const AllProjects = () => {
           <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={rows.length}
+            count={projects.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onChangePage={handleChangePage}

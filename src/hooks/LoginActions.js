@@ -1,6 +1,6 @@
 import { NotificationManager } from "react-notifications";
 
-const LOGIN_URL = "https://registro-horas-auth-back-production.up.railway.app";
+const LOGIN_URL = "http://localhost:3000";
 
 export async function loginUser(dispatch, loginPayload) {
   const requestLoginOptions = {
@@ -23,6 +23,7 @@ export async function loginUser(dispatch, loginPayload) {
     }
 
     const { accessToken } = loginData.data[0];
+    localStorage.setItem("accessToken",accessToken);
     const requestUserOptions = {
       method: "GET",
       headers: {
