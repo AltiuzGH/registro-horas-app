@@ -2,7 +2,7 @@ export const fetchWrapper = {
   get,
   post,
 };
-const LOGIN_URL = "http://localhost:3000/api";
+const HOST = "http://localhost:3000/api";
 
 
 function get(url) {
@@ -14,7 +14,7 @@ function get(url) {
       Authorization: `Bearer ${accessToken}`,
     },
   };
-  return fetch(LOGIN_URL + url, requestOptions).then(handleResponse);
+  return fetch(HOST + url, requestOptions).then(handleResponse);
 }
 
 function post(url, body) {
