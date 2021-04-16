@@ -12,6 +12,7 @@ import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import { ModalConfirmation } from "./modals/ModalConfirmation";
 import { ModalProjects } from "./modals/ModalProjects";
+import WorkerService from "../services/worker.service";
 
 const columns = [
   { id: "nombre", label: "Nombre", minWidth: 100, align: "center" },
@@ -123,6 +124,15 @@ const useStyles = makeStyles((theme) => ({
 
 export const Workers = () => {
   const classes = useStyles();
+
+
+  const getWorkers = () =>{
+      WorkerService.getAll()
+      //Se debe continuar con la integración del servicio
+  }
+
+
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
