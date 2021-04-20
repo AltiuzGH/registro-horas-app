@@ -26,7 +26,6 @@ import { useAuthDispatch, useAuthState } from "./hooks/LoginContext";
 import { logout } from "./hooks/LoginActions";
 import AssessmentIcon from "@material-ui/icons/Assessment";
 import PeopleOutlineIcon from "@material-ui/icons/PeopleOutline";
-
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -154,6 +153,7 @@ export const SideBar = () => {
             color="inherit"
             align="right"
             onClick={handleProfile}
+            style={{cursor: 'pointer'}}
           >
             Bienvenido {user.full_name}
           </Typography>

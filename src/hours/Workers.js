@@ -13,10 +13,13 @@ import TextField from "@material-ui/core/TextField";
 import { ModalConfirmation } from "./modals/ModalConfirmation";
 import { ModalProjects } from "./modals/ModalProjects";
 import WorkerService from "../services/worker.service";
+import { useState } from "react";
+import { useEffect } from "react";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const columns = [
-  { id: "nombre", label: "Nombre", minWidth: 100, align: "center" },
-  { id: "apellido", label: "Apellido", minWidth: 110, align: "center" },
+  { id: "first_name", label: "Nombre", minWidth: 100, align: "center" },
+  { id: "last_name", label: "Apellido", minWidth: 110, align: "center" },
   {
     id: "email",
     label: "Email",
@@ -24,7 +27,7 @@ const columns = [
     align: "center",
   },
   {
-    id: "estado",
+    id: "status",
     label: "Estado del Empleado",
     minWidth: 140,
     align: "center",
@@ -41,53 +44,6 @@ const columns = [
     minWidth: 170,
     align: "center",
   },
-];
-
-function createData(nombre, apellido, email, estado, proyectos, activar) {
-  return { nombre, apellido, email, estado, proyectos, activar };
-}
-
-const rows = [
-  createData(
-    "Cristian",
-    "Diaz",
-    "cdiaz@altiuz.com",
-    "Activo",
-    <ModalProjects />,
-    <ModalConfirmation />
-  ),
-  createData(
-    "Jorge",
-    "Castro",
-    "jcastro@altiuz.com",
-    "Activo",
-    <ModalProjects />,
-    <ModalConfirmation />
-  ),
-  createData(
-    "Felipe",
-    "Sanchez",
-    "fsanchez@altiuz.com",
-    "Activo",
-    <ModalProjects />,
-    <ModalConfirmation />
-  ),
-  createData(
-    "Andrés",
-    "Peña",
-    "apeña@altiuz.com",
-    "Activo",
-    <ModalProjects />,
-    <ModalConfirmation />
-  ),
-  createData(
-    "Juan",
-    "Flores",
-    "jflorez@altiuz.com",
-    "Activo",
-    <ModalProjects />,
-    <ModalConfirmation />
-  ),
 ];
 
 const drawerWidth = 240;
@@ -124,12 +80,29 @@ const useStyles = makeStyles((theme) => ({
 
 export const Workers = () => {
   const classes = useStyles();
+  const [workers, setWorkers] = useState([]);
+  const [progress, setProgress] = useState(true);
 
+  useEffect(() => {
+    getWorkers();
+  }, []);
 
   const getWorkers = () =>{
       WorkerService.getAll()
-      //Se debe continuar con la integración del servicio
-  }
+      .then((response) => {
+          const allWorkers = response.data.map(function (item){
+            item.proyectos = <ModalProjects />;
+            item.activar = <ModalConfirmation />;
+            return item;
+          });
+          setWorkers(allWorkers);
+          setProgress(false);
+      })
+      .catch((e) =>{
+        console.log(e);
+        setProgress(false);
+      });
+  };
 
 
 
@@ -158,6 +131,7 @@ export const Workers = () => {
         </form>
         <Paper className={classes.root}>
           <TableContainer className={classes.container}>
+           {progress && <LinearProgress />}
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -173,17 +147,17 @@ export const Workers = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows
+                {workers
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => {
-                    return (
+                  .map((row) =>{
+                    return(
                       <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.code}
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.id}
                       >
-                        {columns.map((column) => {
+                      {columns.map((column) => {
                           const value = row[column.id];
                           return (
                             <TableCell key={column.id} align={column.align}>
@@ -192,17 +166,18 @@ export const Workers = () => {
                                 : value}
                             </TableCell>
                           );
-                        })}
+                      })}
                       </TableRow>
                     );
-                  })}
+                  })
+                }
               </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={rows.length}
+            count={workers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onChangePage={handleChangePage}
