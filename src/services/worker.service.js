@@ -1,7 +1,7 @@
 import { fetchWrapper } from "../fetch-wrapper.";
 
 const getAll = () =>{
-   return fetchWrapper.get("/workers");  
+   return fetchWrapper.get("/employees");  
 };
 
 export default{

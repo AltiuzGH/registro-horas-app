@@ -93,7 +93,7 @@ export const AllProjects = () => {
   const getProjects = () => {
     ProjectsService.getAll()
       .then((response) => {
-        const projectAssign = response.projects.map(function (item) {
+        const projectAssign = response.data.map(function (item) {
           item.asignar = <ModalAssign />;
           return item;
         });
