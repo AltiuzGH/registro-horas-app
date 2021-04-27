@@ -35,7 +35,7 @@ export async function loginUser(dispatch, loginPayload) {
       },
     };
     const resAuthMe = await fetch(
-      `${LOGIN_URL}/api/auth/me`,
+      `${LOGIN_URL}/auth/me`,
       requestUserOptions
     );
     let userData = await resAuthMe.json();
