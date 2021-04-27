@@ -15,7 +15,7 @@ export async function loginUser(dispatch, loginPayload) {
   try {
     dispatch({ type: "REQUEST_LOGIN" });
     const resAuthLogin = await fetch(
-      `${LOGIN_URL}/api/auth/login`,
+      `${LOGIN_URL}/auth/login`,
       requestLoginOptions
     );
     const loginData = await resAuthLogin.json();
