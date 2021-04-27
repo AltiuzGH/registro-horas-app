@@ -2,8 +2,11 @@ export const fetchWrapper = {
   get,
   post,
 };
-const HOST = "http://localhost:3000/api";
 
+const HOST =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000/api"
+    : process.env.REACT_APP_BACK_TARGET;
 
 function get(url) {
   const accessToken = localStorage.getItem("accessToken");
