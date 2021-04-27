@@ -30,14 +30,14 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { useStyles } from "./styles/_sideBar";
-
+import { useMediaPredicate } from "react-media-hook";
 
 
 
 export const SideBar = () => {
   const history = useHistory();
   const classes = useStyles();
-
+  const biggerThan400 = useMediaPredicate("(min-width: 400px)");
   const theme = useTheme();
 
   // Rutas que se usaran para perfil admin
@@ -155,7 +155,7 @@ export const SideBar = () => {
             onClick={handleProfile}
             style={{cursor: 'pointer'}}
           >
-            Bienvenido {user.full_name}
+            {biggerThan400 && (<Typography> Bienvenido {user.full_name}</Typography>)}
           </Typography>
           <IconButton color="inherit" onClick={handleLogout}>
             <Badge color="secondary">

@@ -1,25 +1,76 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { useMediaPredicate } from "react-media-hook";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-import Container from "@material-ui/core/Container";
-import TextField from "@material-ui/core/TextField";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import {
+  Paper,
+  makeStyles,
+  TableBody,
+  TableRow,
+  TableCell,
+  Toolbar,
+  InputAdornment,
+  LinearProgress,
+  Card,
+  CardActions,
+  CardContent,
+  Typography,
+  Container,
+} from "@material-ui/core";
+import useTable from "../components/UseTable";
 import ProjectsService from "../services/project.service";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
+import Controls from "../components/controls/Controls";
 import { ModalAssign } from "./modals/ModalAssign";
+import { Search } from "@material-ui/icons";
+import { useMediaPredicate } from "react-media-hook";
 
-const columns = [
+const useStyles = makeStyles((theme) => ({
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+  root: {
+    minWidth: 250,
+    marginTop: "10px",
+  },
+  containerProjects: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  pageContent: {
+    margin: theme.spacing(5),
+    padding: theme.spacing(3),
+  },
+  searchInput: {
+    width: "100%",
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
+  },
+  progress: {
+    margin: "2%",
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    height: "100vh",
+    overflow: "auto",
+    width: `calc(100% - 240px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+}));
+
+const headCells = [
   { id: "id_project_c", label: "Id Proyecto", minWidth: 100, align: "center" },
   { id: "name", label: "Proyecto", minWidth: 110, align: "center" },
   {
@@ -54,46 +105,16 @@ const columns = [
   },
 ];
 
-const drawerWidth = 240;
-
-
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
-    margin: "5px",
-  },
-  container: {
-    maxHeight: 600,
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    height: "100vh",
-    overflow: "auto",
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  containerProjects: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  form: {
-    "& > *": {
-      marginBottom: 20,
-    },
-  },
-}));
-
 export const AllProjects = () => {
   const biggerThan400 = useMediaPredicate("(min-width: 400px)");
   const classes = useStyles();
-  const [projects, setProjects] = useState([]);
+  const [records, setRecords] = useState([]);
   const [progress, setProgress] = useState(true);
+  const [filterFn, setFilterFn] = useState({
+    fn: (items) => {
+      return items;
+    },
+  });
 
   useEffect(() => {
     getProjects();
@@ -106,131 +127,134 @@ export const AllProjects = () => {
           item.asignar = <ModalAssign />;
           return item;
         });
-        setProjects(projectAssign);
+        setRecords(projectAssign);
         setProgress(false);
       })
       .catch((e) => {
-        console.log(e);
         setProgress(false);
       });
   };
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  const {
+    TblContainer,
+    TblHead,
+    TblPagination,
+    recordsAfterPagingAndSorting,
+  } = useTable(records, headCells, filterFn);
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+  const handleSearch = (e) => {
+    let target = e.target;
+    setFilterFn({
+      fn: (items) => {
+        if (target.value === "") {
+          return items;
+        } else {
+          const data = items.filter(
+            (x) =>
+              x.id_project_c.toLowerCase().includes(target.value) ||
+              x.cuenta_p_c.toLowerCase().includes(target.value) ||
+              x.name.toLowerCase().includes(target.value) ||
+              x.estimated_start_date.toLowerCase().includes(target.value) ||
+              x.estimated_end_date.toLowerCase().includes(target.value)
+          );
+          return data;
+        }
+      },
+    });
   };
-  
 
   return (
-    <main className={classes.content}>
-      <div className={classes.appBarSpacer} />
-      {progress && <LinearProgress />}
-      <div>
-        {!biggerThan400 && (
-          <div>
-            {projects.map((project) => (
-              <Card className={classes.root} key={project.id}>
-                <CardContent>
-                <Typography variant="h5" component="h2">
-                    {project.id_project_c}
-                  </Typography>
-                  <Typography
-                    className={classes.title}
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    {project.name}
-                  </Typography>
-                  <Typography className={classes.pos} color="textSecondary">
-                    {project.status}
-                  </Typography>
-                  <Typography className={classes.pos} color="textSecondary">
-                    {project.estimated_end_date} -{" "}
-                    {project.estimated_start_date}
-                  </Typography>
-                </CardContent>
-                <CardActions>{project.asignar}</CardActions>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-      <div>
+    <>
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
         {biggerThan400 && (
-          <Container maxWidth="xl" className={classes.containerProjects}>
-            <form className={classes.form} noValidate autoComplete="off">
-              <TextField
-                id="outlined-basic"
-                label="Filtro por Id"
-                variant="outlined"
+          <Paper className={classes.pageContent}>
+            <Toolbar>
+              <Controls.Input
+                label="Buscar en proyectos"
+                className={classes.searchInput}
+                name="id_project_c"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={handleSearch}
               />
-            </form>
-            <Paper className={classes.root}>
-              <TableContainer className={classes.container}>
-              
-                <Table stickyHeader aria-label="sticky table">
-                  <TableHead>
-                    <TableRow>
-                      {columns.map((column) => (
-                        <TableCell
-                          key={column.id}
-                          align={column.align}
-                          style={{ minWidth: column.minWidth }}
-                        >
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {projects
-                      .slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                      .map((row) => {
-                        return (
-                          <TableRow
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            key={row.id_project_c}
-                          >
-                            {columns.map((column) => {
-                              const value = row[column.id];
-                              return (
-                                <TableCell key={column.id} align={column.align}>
-                                  {column.format && typeof value === "number"
-                                    ? column.format(value)
-                                    : value}
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={projects.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </Paper>
-          </Container>
+            </Toolbar>
+
+            {progress && <LinearProgress className={classes.progress} />}
+            <TblContainer>
+              <TblHead />
+              <TableBody>
+                {recordsAfterPagingAndSorting().map((item) => (
+                  <TableRow key={item.id_project_c}>
+                    <TableCell>{item.id_project_c}</TableCell>
+                    <TableCell>{item.cuenta_p_c}</TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.estimated_end_date}</TableCell>
+                    <TableCell>{item.estimated_start_date}</TableCell>
+                    <TableCell>{item.status}</TableCell>
+                    <TableCell>{item.asignar}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </TblContainer>
+            <TblPagination />
+          </Paper>
         )}
-      </div>
-    </main>
+        <div>
+          {!biggerThan400 && (
+            <div>
+              <Container maxWidth="xl" className={classes.containerProjects}>
+                <form className={classes.container} noValidate>
+                  <Toolbar>
+                    <Controls.Input
+                      label="Buscar en proyectos"
+                      className={classes.searchInput}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Search />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={handleSearch}
+                    />
+                  </Toolbar>
+                </form>
+                {progress && <LinearProgress className={classes.progress} />}
+                {recordsAfterPagingAndSorting().map((project) => (
+                  <Card className={classes.root} key={project.id}>
+                    <CardContent>
+                      <Typography variant="h5" component="h2">
+                        {project.id_project_c}
+                      </Typography>
+                      <Typography
+                        className={classes.title}
+                        color="textSecondary"
+                        gutterBottom
+                      >
+                        {project.name}
+                      </Typography>
+                      <Typography className={classes.pos} color="textSecondary">
+                        {project.status}
+                      </Typography>
+                      <Typography className={classes.pos} color="textSecondary">
+                        {project.estimated_end_date} -{" "}
+                        {project.estimated_start_date}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>{project.asignar}</CardActions>
+                  </Card>
+                ))}
+              </Container>
+            </div>
+          )}
+        </div>
+      </main>
+    </>
   );
 };
