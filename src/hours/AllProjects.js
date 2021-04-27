@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { useMediaPredicate } from "react-media-hook";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -12,6 +13,10 @@ import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import ProjectsService from "../services/project.service";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
 import { ModalAssign } from "./modals/ModalAssign";
 
 const columns = [
@@ -51,9 +56,12 @@ const columns = [
 
 const drawerWidth = 240;
 
+
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    margin: "5px",
   },
   container: {
     maxHeight: 600,
@@ -82,6 +90,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const AllProjects = () => {
+  const biggerThan400 = useMediaPredicate("(min-width: 400px)");
   const classes = useStyles();
   const [projects, setProjects] = useState([]);
   const [progress, setProgress] = useState(true);
@@ -116,74 +125,112 @@ export const AllProjects = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  
 
   return (
     <main className={classes.content}>
       <div className={classes.appBarSpacer} />
-
-      <Container maxWidth="xl" className={classes.containerProjects}>
-        <form className={classes.form} noValidate autoComplete="off">
-          <TextField
-            id="outlined-basic"
-            label="Filtro por Id"
-            variant="outlined"
-          />
-        </form>
-        <Paper className={classes.root}>
-          <TableContainer className={classes.container}>
-            {progress && <LinearProgress />}
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {projects
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id_project_c}
-                      >
-                        {columns.map((column) => {
-                          const value = row[column.id];
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === "number"
-                                ? column.format(value)
-                                : value}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
-            component="div"
-            count={projects.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </Container>
+      {progress && <LinearProgress />}
+      <div>
+        {!biggerThan400 && (
+          <div>
+            {projects.map((project) => (
+              <Card className={classes.root} key={project.id}>
+                <CardContent>
+                <Typography variant="h5" component="h2">
+                    {project.id_project_c}
+                  </Typography>
+                  <Typography
+                    className={classes.title}
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    {project.name}
+                  </Typography>
+                  <Typography className={classes.pos} color="textSecondary">
+                    {project.status}
+                  </Typography>
+                  <Typography className={classes.pos} color="textSecondary">
+                    {project.estimated_end_date} -{" "}
+                    {project.estimated_start_date}
+                  </Typography>
+                </CardContent>
+                <CardActions>{project.asignar}</CardActions>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+      <div>
+        {biggerThan400 && (
+          <Container maxWidth="xl" className={classes.containerProjects}>
+            <form className={classes.form} noValidate autoComplete="off">
+              <TextField
+                id="outlined-basic"
+                label="Filtro por Id"
+                variant="outlined"
+              />
+            </form>
+            <Paper className={classes.root}>
+              <TableContainer className={classes.container}>
+              
+                <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                    <TableRow>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ minWidth: column.minWidth }}
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {projects
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((row) => {
+                        return (
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            tabIndex={-1}
+                            key={row.id_project_c}
+                          >
+                            {columns.map((column) => {
+                              const value = row[column.id];
+                              return (
+                                <TableCell key={column.id} align={column.align}>
+                                  {column.format && typeof value === "number"
+                                    ? column.format(value)
+                                    : value}
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[10, 25, 100]}
+                component="div"
+                count={projects.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
+            </Paper>
+          </Container>
+        )}
+      </div>
     </main>
   );
 };

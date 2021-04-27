@@ -31,8 +31,14 @@ function post(url, body) {
 }
 
 function handleResponse(response) {
+  
   return response.text().then((text) => {
     const data = text && JSON.parse(text);
+    if (data.statusCode === 401) {
+      // Add your logic to
+      //  1. Redirect user to LOGIN
+      //  2. Reset authentication from localstorage/sessionstorage
+    }
     if (!response.ok) {
       const error = (data && data.message) || response.statusText;
       return Promise.reject(error);
