@@ -194,8 +194,8 @@ export const AllProjects = () => {
                     <TableCell>{item.id_project_c}</TableCell>
                     <TableCell>{item.cuenta_p_c}</TableCell>
                     <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.estimated_end_date}</TableCell>
                     <TableCell>{item.estimated_start_date}</TableCell>
+                    <TableCell>{item.estimated_end_date}</TableCell>
                     <TableCell>{item.status}</TableCell>
                     <TableCell>{item.asignar}</TableCell>
                   </TableRow>
